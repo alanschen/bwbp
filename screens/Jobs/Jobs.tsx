@@ -15,6 +15,7 @@ import { Overlay, CheckBox, Button } from 'react-native-elements';
 import { cloneDeep } from 'lodash';
 
 interface Availability {
+  [key: string] : boolean;
   monday: boolean;
   tuesday: boolean;
   wednesday: boolean;
@@ -58,11 +59,11 @@ export class JobsScreen extends React.Component<JobsScreenProps, JobsScreenState
       staticHeader: false,
       status: Status.none,
       availability: {
-        monday: false,
-        tuesday: false,
+        monday: true,
+        tuesday: true,
         wednesday: true,
         thursday: true,
-        friday: false,
+        friday: true,
       },
     };
   }
@@ -106,9 +107,21 @@ export class JobsScreen extends React.Component<JobsScreenProps, JobsScreenState
     console.log(newJobs, availability);
 
     // Step 1: Remove jobs where the schedule doesn't align with the users' availability.
-
+    var res: JobRecord[] = [];
+    for (var i = 0; i < newJobs.length; i++) { // loop from right to left of jobs
+      const curJob: JobRecord = newJobs[i];
+      var adding = true;
+      for (var j = 0; j < curJob.schedule.length; j++) { // check all avaliability=
+        if (!availability[curJob.schedule[j].toLowerCase()]) {
+          adding = false;
+        }
+      }
+      if (adding) {
+        res.push(curJob);
+      }
+    }
     // Step 2: Save into state
-    this.setState({ jobs: newJobs });
+    this.setState({ jobs: res });
   };
 
   getStatus = (jobs: JobRecord[]): Status => {
