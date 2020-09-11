@@ -15,7 +15,7 @@ import { Overlay, CheckBox, Button } from 'react-native-elements';
 import { cloneDeep } from 'lodash';
 
 interface Availability {
-  [key: string] : boolean;
+  [key: string] : boolean; // added for clarity
   monday: boolean;
   tuesday: boolean;
   wednesday: boolean;
@@ -48,6 +48,7 @@ interface JobsScreenProps {
  */
 export class JobsScreen extends React.Component<JobsScreenProps, JobsScreenState> {
   static contextType = GlobalContext;
+  visible = false;
 
   constructor(props: JobsScreenProps) {
     super(props);
@@ -99,7 +100,7 @@ export class JobsScreen extends React.Component<JobsScreenProps, JobsScreenState
   };
 
   /**
-   * TODO: Write filterJobs function that updates the components' state with jobs that align with the users' weekly schedule.
+   * Write filterJobs function that updates the components' state with jobs that align with the users' weekly schedule.
    */
   filterJobs = (jobs: JobRecord[], availability: Availability): void => {
     // Step 0: Clone the jobs input
@@ -107,11 +108,13 @@ export class JobsScreen extends React.Component<JobsScreenProps, JobsScreenState
     console.log(newJobs, availability);
 
     // Step 1: Remove jobs where the schedule doesn't align with the users' availability.
-    var res: JobRecord[] = [];
-    for (var i = 0; i < newJobs.length; i++) { // loop from right to left of jobs
+    const res: JobRecord[] = [];
+    // loop from right to left of jobs
+    for (var i = 0; i < newJobs.length; i++) {
       const curJob: JobRecord = newJobs[i];
       var adding = true;
-      for (var j = 0; j < curJob.schedule.length; j++) { // check all avaliability=
+      // check all avaliability for jobs
+      for (var j = 0; j < curJob.schedule.length; j++) {
         if (!availability[curJob.schedule[j].toLowerCase()]) {
           adding = false;
         }
@@ -120,7 +123,7 @@ export class JobsScreen extends React.Component<JobsScreenProps, JobsScreenState
         res.push(curJob);
       }
     }
-    // Step 2: Save into state
+    // Step 2: Save into state, changed from newJobs to res
     this.setState({ jobs: res });
   };
 
